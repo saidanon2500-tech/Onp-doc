@@ -46,9 +46,27 @@ jobs:
           sed -i 's/totalWeight: totalWeight,/totalWeight: totalWeight.toDouble(),/' lib/services/parser_service.dart
           sed -i 's/value: value,/value: value.toDouble(),/' lib/services/parser_service.dart
         working-directory: ${{ env.PROJECT_DIR }}
-        
+      - name: Fix ML Kit R8 rules
+        run: |
+          cat > android/app/proguard-rules.pro <<'EOF'
+          -dontwarn com.google.mlkit.vision.text.chinese.**
+          -dontwarn com.google.mlkit.vision.text.devanagari.**
+          -dontwarn com.google.mlkit.vision.text.japanese.**
+          -dontwarn com.google.mlkit.vision.text.korean.**
+          EOF
+
+          if [ -f android/app/build.gradle.kts ]; then
+            sed -i '/signingConfig = signingConfigs.getByName("debug")/a\
+                    proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")' android/app/build.gradle.kts
+          fi
+
+          if [ -f android/app/build.gradle ]; then
+            sed -i '/signingConfig signingConfigs.debug/a\
+                    proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"' android/app/build.gradle
+          fi
+        working-directory: ${{ env.PROJECT_DIR }}
       - name: Build APK
-        run: flutter build apk --release --no-shrink
+        run: flutter build apk --release
         working-directory: ${{ env.PROJECT_DIR }}
 
       - name: Upload APK
