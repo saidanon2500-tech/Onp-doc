@@ -48,7 +48,7 @@ jobs:
         working-directory: ${{ env.PROJECT_DIR }}
         
       - name: Build APK
-        run: flutter build apk --release
+        run: flutter build apk --release --no-shrink
         working-directory: ${{ env.PROJECT_DIR }}
 
       - name: Upload APK
