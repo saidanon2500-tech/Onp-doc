@@ -40,6 +40,13 @@ jobs:
         run: flutter pub get
         working-directory: ${{ env.PROJECT_DIR }}
 
+      - name: Fix Dart number types
+        run: |
+          sed -i 's/unitPrice: unitPrice,/unitPrice: unitPrice.toDouble(),/' lib/services/parser_service.dart
+          sed -i 's/totalWeight: totalWeight,/totalWeight: totalWeight.toDouble(),/' lib/services/parser_service.dart
+          sed -i 's/value: value,/value: value.toDouble(),/' lib/services/parser_service.dart
+        working-directory: ${{ env.PROJECT_DIR }}
+        
       - name: Build APK
         run: flutter build apk --release
         working-directory: ${{ env.PROJECT_DIR }}
