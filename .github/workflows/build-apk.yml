@@ -31,7 +31,11 @@ jobs:
         with:
           channel: stable
           cache: true
-
+          
+      - name: Generate Android files
+        run: flutter create . --platforms android
+        working-directory: ${{ env.PROJECT_DIR }}
+        
       - name: Install packages
         run: flutter pub get
         working-directory: ${{ env.PROJECT_DIR }}
